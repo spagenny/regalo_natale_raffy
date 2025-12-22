@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Un regalo speciale per te ❤️</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #1a4d2e 0%, #2d5f3f 25%, #4a7c59 50%, #2d5f3f 75%, #1a4d2e 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        body::before {
+            content: '❄️';
+            position: absolute;
+            top: 5%;
+            left: 10%;
+            font-size: 2em;
+            opacity: 0.15;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        body::after {
+            content: '✨';
+            position: absolute;
+            top: 15%;
+            right: 15%;
+            font-size: 1.5em;
+            opacity: 0.2;
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        .container {
+            background: linear-gradient(to bottom, #fffef9 0%, #faf8f3 100%);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(212, 175, 55, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 50px 40px;
+            animation: fadeIn 1s ease-in;
+            position: relative;
+            border: 2px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        .container::before {
+            content: '🎄';
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            font-size: 1.5em;
+            opacity: 0.4;
+        }
+        
+        .container::after {
+            content: '🎁';
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 1.5em;
+            opacity: 0.4;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            color: #1a4d2e;
+            text-align: center;
+            margin-bottom: 35px;
+            margin-top: 15px;
+            font-size: 2.8em;
+            font-weight: 300;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 4px rgba(212, 175, 55, 0.1);
+        }
+
+        .story {
+            line-height: 2;
+            color: #2c3e50;
+            font-size: 1.15em;
+            margin-bottom: 35px;
+            font-weight: 300;
+            letter-spacing: 0.3px;
+        }
+
+        .story p {
+            margin-bottom: 22px;
+            text-align: justify;
+        }
+
+        .highlight {
+            color: #c41e3a;
+            font-weight: 500;
+        }
+
+        .mystery {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            color: #1a4d2e;
+            font-weight: 400;
+        }
+
+        .ticket-info {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.08), rgba(26, 77, 46, 0.08));
+            border-left: 4px solid #d4af37;
+            padding: 30px;
+            margin: 35px 0;
+            border-radius: 12px;
+            display: none;
+            opacity: 0;
+            transition: opacity 1s ease-in;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.1);
+        }
+        
+        .ticket-info.revealed {
+            display: block;
+            animation: fadeInTicket 1s ease-in forwards;
+        }
+        
+        @keyframes fadeInTicket {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ticket-info h2 {
+            font-family: 'Cormorant Garamond', serif;
+            color: #1a4d2e;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .ticket-info h2 {
+            color: #764ba2;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin: 12px 0;
+            font-size: 1.1em;
+            color: #2c3e50;
+            font-weight: 300;
+            letter-spacing: 0.3px;
+        }
+        
+        .typewriter {
+            overflow: hidden;
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        .info-item strong {
+            color: #667eea;
+            margin-right: 10px;
+            min-width: 80px;
+        }
+
+        .music-button {
+            background: linear-gradient(135deg, #d4af37, #c9a532, #1a4d2e);
+            color: white;
+            border: none;
+            padding: 18px 45px;
+            font-size: 1.15em;
+            font-weight: 400;
+            letter-spacing: 1.5px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: block;
+            margin: 35px auto;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            font-size: 0.95em;
+        }
+
+        .music-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.6);
+        }
+
+        .music-button:active {
+            transform: translateY(-1px);
+        }
+
+        .music-button.playing {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+            }
+            50% {
+                box-shadow: 0 10px 40px rgba(212, 175, 55, 0.8);
+            }
+        }
+
+        .heart {
+            text-align: center;
+            font-size: 3em;
+            margin: 25px 0;
+            animation: heartbeat 1.5s infinite;
+            filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.3));
+        }
+
+        @keyframes heartbeat {
+            0%, 100% {
+                transform: scale(1);
+            }
+            25% {
+                transform: scale(1.1);
+            }
+            50% {
+                transform: scale(1);
+            }
+        }
+
+        .signature {
+            text-align: right;
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            color: #1a4d2e;
+            margin-top: 35px;
+            font-size: 1.2em;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 35px 25px;
+            }
+            
+            h1 {
+                font-size: 2.2em;
+            }
+            
+            .story {
+                font-size: 1em;
+            }
+            
+            .container::before,
+            .container::after {
+                font-size: 1.2em;
+            }
+        }
+        
+        .snowflake {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1em;
+            animation: fall linear infinite;
+            user-select: none;
+            pointer-events: none;
+        }
+        
+        @keyframes fall {
+            0% {
+                transform: translateY(-10vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0.3;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="snowflake" style="left: 10%; animation-duration: 10s; animation-delay: 0s;">❄</div>
+    <div class="snowflake" style="left: 20%; animation-duration: 12s; animation-delay: 2s;">❅</div>
+    <div class="snowflake" style="left: 30%; animation-duration: 15s; animation-delay: 4s;">❄</div>
+    <div class="snowflake" style="left: 50%; animation-duration: 11s; animation-delay: 1s;">❆</div>
+    <div class="snowflake" style="left: 60%; animation-duration: 13s; animation-delay: 3s;">❄</div>
+    <div class="snowflake" style="left: 70%; animation-duration: 14s; animation-delay: 5s;">❅</div>
+    <div class="snowflake" style="left: 80%; animation-duration: 16s; animation-delay: 0s;">❄</div>
+    <div class="snowflake" style="left: 90%; animation-duration: 12s; animation-delay: 2s;">❆</div>
+    
+    <div class="container">
+        <h1>Un viaggio speciale ti aspetta... ✨</h1>
+        
+        <div class="story">
+            <p>
+                Amore mio, preparati per un'avventura che ti porterà in un luogo 
+                <span class="mystery">misterioso</span>...
+            </p>
+            
+            <p>
+                Andremo a <span class="highlight">Rho</span>, ma no, non è la fiera del mobile! 
+                Non dovrai scegliere divani né lampade di design (anche se so che ti piacerebbe 😄).
+            </p>
+            
+            <p>
+                Questa volta a <span class="highlight">Fiera Milano</span> non ci saranno stand 
+                o cataloghi, ma qualcosa di molto più <span class="mystery">emozionante</span>...
+            </p>
+            
+            <p>
+                Una voce che ci ha accompagnato, che ci ha fatto commuovere, 
+                che abbiamo ascoltato insieme nei momenti più belli e in quelli più difficili.
+            </p>
+            
+            <p>
+                <strong>Lewis Capaldi</strong> ci aspetta, dal vivo, con tutta la sua anima 
+                e quella voce che sa arrivare dritta al cuore. 🎤❤️
+            </p>
+        </div>
+
+        <div class="ticket-info">
+            <h2>🎫 I Dettagli del Tuo Regalo</h2>
+            <div class="info-item" id="artist"></div>
+            <div class="info-item" id="date"></div>
+            <div class="info-item" id="time"></div>
+            <div class="info-item" id="location"></div>
+        </div>
+
+        <button class="music-button" id="playButton">
+            ✨ Scopri il tuo regalo ✨
+        </button>
+
+        <div class="heart">❤️</div>
+
+        <div class="signature">
+            Con tutto il mio amore,<br>
+            Il tuo Gennaro 💕
+        </div>
+    </div>
+
+    <audio id="audio" preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        const playButton = document.getElementById('playButton');
+        const audio = document.getElementById('audio');
+        const ticketInfo = document.querySelector('.ticket-info');
+        let hasRevealed = false;
+
+        playButton.addEventListener('click', function() {
+            if (!hasRevealed) {
+                // Start music
+                audio.play();
+                
+                // Hide button temporarily
+                playButton.style.opacity = '0';
+                playButton.style.pointerEvents = 'none';
+                
+                // Show ticket info after a short delay
+                setTimeout(() => {
+                    ticketInfo.classList.add('revealed');
+                    
+                    // Start typewriter effect for each line
+                    setTimeout(() => typewriterEffect('artist', '🎤 Artista: Lewis Capaldi'), 500);
+                    setTimeout(() => typewriterEffect('date', '📅 Data: Mercoledì 17 Giugno 2026'), 2500);
+                    setTimeout(() => typewriterEffect('time', '🕘 Ora: 21:00'), 4500);
+                    setTimeout(() => typewriterEffect('location', '📍 Luogo: Fiera Milano - RHO'), 6000);
+                    
+                    // Show pause button after all text is revealed
+                    setTimeout(() => {
+                        playButton.textContent = '⏸️ Pausa';
+                        playButton.style.opacity = '1';
+                        playButton.style.pointerEvents = 'auto';
+                        playButton.classList.add('playing');
+                    }, 9000);
+                    
+                }, 1000);
+                
+                hasRevealed = true;
+            } else {
+                // Toggle play/pause
+                if (audio.paused) {
+                    audio.play();
+                    playButton.textContent = '⏸️ Pausa';
+                    playButton.classList.add('playing');
+                } else {
+                    audio.pause();
+                    playButton.textContent = '▶️ Riprendi la musica';
+                    playButton.classList.remove('playing');
+                }
+            }
+        });
+
+        function typewriterEffect(id, fullText) {
+            const element = document.getElementById(id);
+            element.innerHTML = '';
+            element.style.whiteSpace = 'nowrap';
+            let index = 0;
+            
+            const interval = setInterval(() => {
+                if (index < fullText.length) {
+                    element.innerHTML += fullText.charAt(index);
+                    index++;
+                } else {
+                    clearInterval(interval);
+                    element.style.whiteSpace = 'normal';
+                }
+            }, 50); // 50ms per character for smooth typewriter effect
+        }
+
+        audio.addEventListener('ended', function() {
+            playButton.textContent = '▶️ Riascolta';
+            playButton.classList.remove('playing');
+        });
+    </script>
+</body>
+</html>
