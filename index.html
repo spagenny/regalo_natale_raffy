@@ -25,7 +25,6 @@
             align-items: center;
             padding: 20px;
             position: relative;
-            overflow: hidden;
         }
         
         body::before {
@@ -68,6 +67,8 @@
             animation: fadeIn 1s ease-in;
             position: relative;
             border: 2px solid rgba(212, 175, 55, 0.2);
+            z-index: 2;
+            margin: 20px 0;
         }
         
         .container::before {
@@ -294,12 +295,13 @@
         }
         
         .snowflake {
-            position: absolute;
+            position: fixed;
             color: rgba(255, 255, 255, 0.8);
             font-size: 1em;
             animation: fall linear infinite;
             user-select: none;
             pointer-events: none;
+            z-index: 1;
         }
         
         @keyframes fall {
