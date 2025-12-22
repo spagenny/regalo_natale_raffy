@@ -124,6 +124,11 @@
         .story p {
             margin-bottom: 22px;
             text-align: justify;
+            opacity: 0;
+        }
+        
+        .story p.typing {
+            opacity: 1;
         }
 
         .highlight {
@@ -190,7 +195,7 @@
             padding-top: 25px;
             border-top: 2px solid rgba(212, 175, 55, 0.3);
             justify-content: center;
-            font-size: 3.5em;
+            font-size: 2.8em;
             font-family: 'Cormorant Garamond', serif;
             font-weight: 600;
             color: #c41e3a;
@@ -199,6 +204,13 @@
             text-shadow: 3px 3px 6px rgba(196, 30, 58, 0.3);
             flex-wrap: wrap;
             display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .artist-line {
+            display: flex;
+            justify-content: center;
             gap: 5px;
         }
         
@@ -236,12 +248,10 @@
             display: inline-block;
             opacity: 0;
             transform: scale(0) rotateY(180deg);
-            animation: wheelReveal 0.8s forwards;
         }
         
         .artist-letter.revealed {
-            opacity: 1;
-            transform: scale(1) rotateY(0deg);
+            animation: wheelReveal 0.8s forwards;
         }
         
         @keyframes wheelReveal {
@@ -351,20 +361,16 @@
             }
             
             .artist-reveal {
-                font-size: 2em;
+                font-size: 1.8em;
                 letter-spacing: 3px;
                 margin-top: 20px;
                 padding-top: 20px;
-                gap: 2px;
+                gap: 5px;
             }
             
             .letter-container {
-                width: 40px;
-                height: 55px;
-            }
-            
-            .letter-slot.space {
-                width: 15px;
+                width: 35px;
+                height: 50px;
             }
             
             .container::before,
@@ -437,25 +443,13 @@
         <h1>Un viaggio speciale ti aspetta... ✨</h1>
         
         <div class="story">
-            <p>
-                Amore mio, preparati per un'avventura che ti porterà in un luogo 
-                <span class="mystery">misterioso</span>...
-            </p>
+            <p data-text="Amore mio, preparati per un'avventura che ti porterà in un luogo misterioso..."></p>
             
-            <p>
-                Andremo a <span class="highlight">Rho</span>, ma no, non è la fiera del mobile! 
-                Non dovrai scegliere divani né lampade di design (anche se so che ti piacerebbe 😄).
-            </p>
+            <p data-text="Andremo a Rho, ma no, non è la fiera del mobile! Non dovrai scegliere divani né lampade di design (anche se so che ti piacerebbe 😄)."></p>
             
-            <p>
-                Questa volta a <span class="highlight">Fiera Milano</span> non ci saranno stand 
-                o cataloghi, ma qualcosa di molto più <span class="mystery">emozionante</span>...
-            </p>
+            <p data-text="Questa volta a Fiera Milano non ci saranno stand o cataloghi, ma qualcosa di molto più emozionante..."></p>
             
-            <p>
-                Una voce che ci ha accompagnato, che ci ha fatto commuovere, 
-                che abbiamo ascoltato insieme nei momenti più belli e in quelli più difficili...
-            </p>
+            <p data-text="Una voce che ci ha accompagnato, che ci ha fatto commuovere, che abbiamo ascoltato insieme nei momenti più belli e in quelli più difficili..."></p>
         </div>
 
         <div class="ticket-info">
@@ -487,6 +481,47 @@
         const audio = document.getElementById('audio');
         const ticketInfo = document.querySelector('.ticket-info');
         let hasRevealed = false;
+
+        // Start typewriter effect for story on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const storyParagraphs = document.querySelectorAll('.story p');
+            typewriterStory(storyParagraphs, 0);
+        });
+
+        function typewriterStory(paragraphs, index) {
+            if (index >= paragraphs.length) return;
+            
+            const paragraph = paragraphs[index];
+            const text = paragraph.dataset.text;
+            paragraph.classList.add('typing');
+            paragraph.innerHTML = '';
+            
+            let charIndex = 0;
+            let currentHtml = '';
+            
+            const interval = setInterval(() => {
+                if (charIndex < text.length) {
+                    const char = text.charAt(charIndex);
+                    currentHtml += char;
+                    
+                    // Apply highlighting for specific words
+                    let displayHtml = currentHtml;
+                    displayHtml = displayHtml.replace(/misterioso/g, '<span class="mystery">misterioso</span>');
+                    displayHtml = displayHtml.replace(/Rho/g, '<span class="highlight">Rho</span>');
+                    displayHtml = displayHtml.replace(/Fiera Milano/g, '<span class="highlight">Fiera Milano</span>');
+                    displayHtml = displayHtml.replace(/emozionante/g, '<span class="mystery">emozionante</span>');
+                    
+                    paragraph.innerHTML = displayHtml;
+                    charIndex++;
+                } else {
+                    clearInterval(interval);
+                    // Start next paragraph after a short delay
+                    setTimeout(() => {
+                        typewriterStory(paragraphs, index + 1);
+                    }, 500);
+                }
+            }, 36); // 36ms per character (20% slower than 30ms) for comfortable reading
+        }
 
         playButton.addEventListener('click', function() {
             if (!hasRevealed) {
@@ -551,65 +586,115 @@
 
         function revealArtistName() {
             const artistElement = document.getElementById('artist');
-            const artistName = 'LEWIS CAPALDI';
+            const firstName = 'LEWIS';
+            const lastName = 'CAPALDI';
             const emoji = '🎤 ';
             
             // Clear and add emoji
             artistElement.innerHTML = '<div style="font-size: 0.5em; margin-right: 20px; margin-bottom: 20px; width: 100%; text-align: center;">' + emoji + '</div>';
             
-            // Create all letter slots with segments first
-            const letters = artistName.split('');
-            const letterElements = [];
+            // Create first line (LEWIS)
+            const firstLine = document.createElement('div');
+            firstLine.className = 'artist-line';
             
-            letters.forEach((char, index) => {
+            // Create second line (CAPALDI)
+            const secondLine = document.createElement('div');
+            secondLine.className = 'artist-line';
+            
+            const firstNameElements = [];
+            const lastNameElements = [];
+            
+            // Create slots for first name
+            firstName.split('').forEach((char, index) => {
                 const slot = document.createElement('div');
-                slot.className = char === ' ' ? 'letter-slot space' : 'letter-slot';
+                slot.className = 'letter-slot';
                 
-                if (char !== ' ') {
-                    const container = document.createElement('div');
-                    container.className = 'letter-container';
-                    
-                    // Add the segment (golden bar underneath)
-                    const segment = document.createElement('div');
-                    segment.className = 'letter-segment';
-                    container.appendChild(segment);
-                    
-                    // Add the letter (hidden initially)
-                    const letterSpan = document.createElement('span');
-                    letterSpan.className = 'artist-letter';
-                    letterSpan.textContent = char;
-                    letterSpan.dataset.index = index;
-                    container.appendChild(letterSpan);
-                    
-                    slot.appendChild(container);
-                    letterElements.push({ element: letterSpan, index: index, segment: segment });
-                }
+                const container = document.createElement('div');
+                container.className = 'letter-container';
                 
-                artistElement.appendChild(slot);
+                const segment = document.createElement('div');
+                segment.className = 'letter-segment';
+                container.appendChild(segment);
+                
+                const letterSpan = document.createElement('span');
+                letterSpan.className = 'artist-letter';
+                letterSpan.textContent = char;
+                letterSpan.dataset.index = index;
+                container.appendChild(letterSpan);
+                
+                slot.appendChild(container);
+                firstLine.appendChild(slot);
+                firstNameElements.push({ element: letterSpan, index: index, segment: segment });
             });
             
-            // Create random order for reveal (excluding spaces)
-            const shuffledIndices = letterElements
+            // Create slots for last name
+            lastName.split('').forEach((char, index) => {
+                const slot = document.createElement('div');
+                slot.className = 'letter-slot';
+                
+                const container = document.createElement('div');
+                container.className = 'letter-container';
+                
+                const segment = document.createElement('div');
+                segment.className = 'letter-segment';
+                container.appendChild(segment);
+                
+                const letterSpan = document.createElement('span');
+                letterSpan.className = 'artist-letter';
+                letterSpan.textContent = char;
+                letterSpan.dataset.index = index;
+                container.appendChild(letterSpan);
+                
+                slot.appendChild(container);
+                secondLine.appendChild(slot);
+                lastNameElements.push({ element: letterSpan, index: index, segment: segment });
+            });
+            
+            artistElement.appendChild(firstLine);
+            artistElement.appendChild(secondLine);
+            
+            // Create random order for each name
+            const firstNameIndices = firstNameElements
+                .map((item, i) => i)
+                .sort(() => Math.random() - 0.5);
+            const lastNameIndices = lastNameElements
                 .map((item, i) => i)
                 .sort(() => Math.random() - 0.5);
             
-            // Reveal letters in random order with 1.5 second delay
-            shuffledIndices.forEach((shuffledIndex, i) => {
-                setTimeout(() => {
-                    const letterData = letterElements[shuffledIndex];
-                    letterData.element.classList.add('revealed');
-                    
-                    // Make segment pulse when letter is revealed
-                    letterData.segment.style.animation = 'pulse 0.5s ease-out';
-                    
-                    // Trigger fireworks after last letter
-                    if (i === shuffledIndices.length - 1) {
-                        setTimeout(() => {
-                            launchFireworks();
-                        }, 1000);
-                    }
-                }, i * 1500);
-            });
+            // Alternate between first and last name
+            const maxLength = Math.max(firstNameIndices.length, lastNameIndices.length);
+            let totalRevealed = 0;
+            const totalLetters = firstNameIndices.length + lastNameIndices.length;
+            
+            for (let i = 0; i < maxLength; i++) {
+                // Reveal from first name
+                if (i < firstNameIndices.length) {
+                    setTimeout(() => {
+                        const letterData = firstNameElements[firstNameIndices[i]];
+                        letterData.element.classList.add('revealed');
+                        letterData.segment.style.animation = 'pulse 0.5s ease-out';
+                        
+                        totalRevealed++;
+                        if (totalRevealed === totalLetters) {
+                            setTimeout(() => launchFireworks(), 1000);
+                        }
+                    }, i * 3000); // 3 seconds for pair (1.5s * 2)
+                }
+                
+                // Reveal from last name (offset by 1.5s)
+                if (i < lastNameIndices.length) {
+                    setTimeout(() => {
+                        const letterData = lastNameElements[lastNameIndices[i]];
+                        letterData.element.classList.add('revealed');
+                        letterData.segment.style.animation = 'pulse 0.5s ease-out';
+                        
+                        totalRevealed++;
+                        if (totalRevealed === totalLetters) {
+                            setTimeout(() => launchFireworks(), 1000);
+                        }
+                    }, i * 3000 + 1500); // Offset by 1.5 seconds
+                }
+            }
         }
 
         audio.addEventListener('ended', function() {
