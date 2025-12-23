@@ -284,6 +284,30 @@
             gap: 10px;
         }
         
+        .mystery-topic {
+            font-size: 0.5em;
+            color: #4d9de0;
+            font-weight: 700;
+            font-family: 'Montserrat', sans-serif;
+            text-align: center;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            opacity: 0;
+            transform: translateY(-10px);
+            animation: fadeInTopic 1s ease-in forwards;
+        }
+        
+        @keyframes fadeInTopic {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
         .artist-line {
             display: flex;
             justify-content: center;
@@ -364,7 +388,7 @@
             display: block;
             margin: 35px auto;
             box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
-            transition: all 0.3s ease;
+            transition: opacity 0.2s ease, transform 0.3s ease;
             font-family: 'Montserrat', sans-serif;
             text-transform: uppercase;
             font-size: 0.95em;
@@ -376,6 +400,12 @@
             opacity: 1;
             pointer-events: auto;
             animation: fadeInButton 1s ease-in forwards;
+        }
+        
+        .music-button.hidden {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            transition: opacity 0.1s ease !important;
         }
         
         @keyframes fadeInButton {
@@ -463,6 +493,11 @@
                 gap: 5px;
             }
             
+            .mystery-topic {
+                font-size: 0.45em;
+                margin-bottom: 10px;
+            }
+            
             .letter-container {
                 width: 35px;
                 height: 50px;
@@ -522,6 +557,60 @@
                 opacity: 0;
             }
         }
+        
+        .christmas-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 4em;
+            font-weight: 600;
+            color: #c41e3a;
+            text-align: center;
+            text-shadow: 3px 3px 8px rgba(212, 175, 55, 0.5);
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            padding: 40px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(250, 248, 243, 0.95));
+            border-radius: 30px;
+            border: 3px solid #d4af37;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+        
+        .christmas-message.show {
+            animation: christmasAppear 1.5s ease-out forwards;
+        }
+        
+        @keyframes christmasAppear {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0) rotate(-180deg);
+            }
+            60% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.1) rotate(10deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1) rotate(0deg);
+            }
+        }
+        
+        .christmas-message .emoji-decoration {
+            font-size: 0.6em;
+            display: block;
+            margin: 10px 0;
+        }
+        
+        @media (max-width: 600px) {
+            .christmas-message {
+                font-size: 2.5em;
+                padding: 30px 20px;
+                width: 90%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -574,6 +663,12 @@
     <audio id="audio" preload="auto">
         <source src="audio.mp3" type="audio/mpeg">
     </audio>
+    
+    <div class="christmas-message" id="christmasMessage">
+        <span class="emoji-decoration">🎄 ❄️ 🎁</span>
+        Buon Natale<br>Amore mio!
+        <span class="emoji-decoration">✨ ❤️ 🎄</span>
+    </div>
 
     <script>
         const playButton = document.getElementById('playButton');
@@ -670,6 +765,8 @@
         playButton.addEventListener('click', function() {
             if (!hasRevealed) {
                 // FIRST CLICK: Show ticket details (location, date, time)
+                // Add hidden class immediately for instant disappearance
+                playButton.classList.add('hidden');
                 playButton.style.opacity = '0';
                 playButton.style.pointerEvents = 'none';
                 
@@ -684,6 +781,7 @@
                     
                     // After all details are complete, show second button
                     setTimeout(() => {
+                        playButton.classList.remove('hidden');
                         playButton.textContent = '🤔 Sei ancora più curiosa? Clicca qui! 🤔';
                         playButton.style.opacity = '1';
                         playButton.style.pointerEvents = 'auto';
@@ -694,10 +792,12 @@
                 
             } else if (hasRevealed === 'step2') {
                 // SECOND CLICK: Start music and show empty segments
+                // Hide button immediately
+                playButton.classList.add('hidden');
                 playButton.style.opacity = '0';
                 playButton.style.pointerEvents = 'none';
                 
-                // Start music with error handling - MOVED HERE
+                // Start music with error handling
                 const playPromise = audio.play();
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
@@ -717,6 +817,7 @@
                     
                     // Show third button after segments are visible
                     setTimeout(() => {
+                        playButton.classList.remove('hidden');
                         playButton.textContent = '🎯 Provi a dare la soluzione? Clicca qui! 🎯';
                         playButton.style.opacity = '1';
                         playButton.style.pointerEvents = 'auto';
@@ -726,13 +827,16 @@
                 
             } else if (hasRevealed === 'step3') {
                 // THIRD CLICK: Reveal letters one by one
+                // Hide button immediately
+                playButton.classList.add('hidden');
                 playButton.style.opacity = '0';
                 playButton.style.pointerEvents = 'none';
                 
                 revealArtistLetters();
                 
-                // Show pause button after everything
+                // Show pause button after everything (letters + fireworks complete)
                 setTimeout(() => {
+                    playButton.classList.remove('hidden');
                     playButton.textContent = '⏸️ Pausa';
                     playButton.style.opacity = '1';
                     playButton.style.pointerEvents = 'auto';
@@ -779,6 +883,12 @@
             
             // Clear and add emoji
             artistElement.innerHTML = '<div style="font-size: 0.5em; margin-right: 20px; margin-bottom: 20px; width: 100%; text-align: center;">' + emoji + '</div>';
+            
+            // Add mystery topic title
+            const topicTitle = document.createElement('div');
+            topicTitle.className = 'mystery-topic';
+            topicTitle.textContent = 'Argomento: Con colpevole ritardo';
+            artistElement.appendChild(topicTitle);
             
             // Create first line (LEWIS)
             const firstLine = document.createElement('div');
@@ -1029,6 +1139,12 @@
                     createFirework(container, colors);
                 }, i * 400);
             }
+            
+            // Show Christmas message after all fireworks
+            setTimeout(() => {
+                const christmasMessage = document.getElementById('christmasMessage');
+                christmasMessage.classList.add('show');
+            }, 3500); // After all 8 fireworks (8 * 400 = 3200ms + 300ms delay)
         }
 
         function createFirework(container, colors) {
