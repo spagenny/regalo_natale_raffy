@@ -130,6 +130,82 @@
         .story p.typing {
             opacity: 1;
         }
+        
+        .furniture-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            opacity: 0;
+            transition: opacity 1s ease-in;
+        }
+        
+        .furniture-container.visible {
+            opacity: 1;
+        }
+        
+        .furniture-item {
+            position: relative;
+            font-size: 4em;
+            animation: fadeInItem 0.8s ease-in forwards;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+        }
+        
+        .furniture-item:nth-child(1) {
+            animation-delay: 0s;
+        }
+        
+        .furniture-item:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+        
+        .furniture-item:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+        
+        .furniture-item:nth-child(4) {
+            animation-delay: 0.9s;
+        }
+        
+        @keyframes fadeInItem {
+            from {
+                opacity: 0;
+                transform: scale(0) rotate(-180deg);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+        
+        .red-cross {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.3em;
+            color: #ff0000;
+            opacity: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            animation: crossAppear 0.5s ease-in forwards;
+            pointer-events: none;
+        }
+        
+        @keyframes crossAppear {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0) rotate(0deg);
+            }
+            60% {
+                transform: translate(-50%, -50%) scale(1.3) rotate(180deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1) rotate(360deg);
+            }
+        }
 
         .highlight {
             color: #c41e3a;
@@ -292,6 +368,25 @@
             font-family: 'Montserrat', sans-serif;
             text-transform: uppercase;
             font-size: 0.95em;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .music-button.visible {
+            opacity: 1;
+            pointer-events: auto;
+            animation: fadeInButton 1s ease-in forwards;
+        }
+        
+        @keyframes fadeInButton {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .music-button:hover {
@@ -445,15 +540,19 @@
         <div class="story">
             <p data-text="Amore mio, preparati per un'avventura che ti porterà in un luogo misterioso..."></p>
             
+            <div class="furniture-container" id="furnitureContainer">
+                <div class="furniture-item">🛋️</div>
+                <div class="furniture-item">🖼️</div>
+                <div class="furniture-item">🪑</div>
+                <div class="furniture-item">💡</div>
+            </div>
+            
             <p data-text="Andremo a Rho, ma no, non è la fiera del mobile! Non dovrai scegliere divani né lampade di design (anche se so che ti piacerebbe 😄)."></p>
             
             <p data-text="Questa volta a Fiera Milano non ci saranno stand o cataloghi, ma qualcosa di molto più emozionante..."></p>
-            
-            <p data-text="Una voce che ci ha accompagnato, che ci ha fatto commuovere, che abbiamo ascoltato insieme nei momenti più belli e in quelli più difficili..."></p>
         </div>
 
         <div class="ticket-info">
-            <h2>🎫 I Dettagli del Tuo Regalo</h2>
             <div class="info-item" id="location"></div>
             <div class="info-item" id="date"></div>
             <div class="info-item" id="time"></div>
@@ -461,7 +560,7 @@
         </div>
 
         <button class="music-button" id="playButton">
-            ✨ Scopri il tuo regalo ✨
+            🎁 Vuoi scoprirlo? Clicca qui! 🎁
         </button>
 
         <div class="heart">❤️</div>
@@ -496,39 +595,81 @@
             paragraph.classList.add('typing');
             paragraph.innerHTML = '';
             
-            let charIndex = 0;
-            let currentHtml = '';
+            // Show furniture before second paragraph (index 1)
+            if (index === 1) {
+                const furnitureContainer = document.getElementById('furnitureContainer');
+                furnitureContainer.classList.add('visible');
+                
+                // Wait for furniture to appear before starting paragraph
+                setTimeout(() => {
+                    startTyping();
+                }, 1500);
+            } else {
+                startTyping();
+            }
             
-            const interval = setInterval(() => {
-                if (charIndex < text.length) {
-                    const char = text.charAt(charIndex);
-                    currentHtml += char;
-                    
-                    // Apply highlighting for specific words
-                    let displayHtml = currentHtml;
-                    displayHtml = displayHtml.replace(/misterioso/g, '<span class="mystery">misterioso</span>');
-                    displayHtml = displayHtml.replace(/Rho/g, '<span class="highlight">Rho</span>');
-                    displayHtml = displayHtml.replace(/Fiera Milano/g, '<span class="highlight">Fiera Milano</span>');
-                    displayHtml = displayHtml.replace(/emozionante/g, '<span class="mystery">emozionante</span>');
-                    
-                    paragraph.innerHTML = displayHtml;
-                    charIndex++;
-                } else {
-                    clearInterval(interval);
-                    // Start next paragraph after a short delay
-                    setTimeout(() => {
-                        typewriterStory(paragraphs, index + 1);
-                    }, 500);
-                }
-            }, 36); // 36ms per character (20% slower than 30ms) for comfortable reading
+            function startTyping() {
+                let charIndex = 0;
+                let currentHtml = '';
+                
+                const interval = setInterval(() => {
+                    if (charIndex < text.length) {
+                        const char = text.charAt(charIndex);
+                        currentHtml += char;
+                        
+                        // Apply highlighting for specific words
+                        let displayHtml = currentHtml;
+                        displayHtml = displayHtml.replace(/misterioso/g, '<span class="mystery">misterioso</span>');
+                        displayHtml = displayHtml.replace(/Rho/g, '<span class="highlight">Rho</span>');
+                        displayHtml = displayHtml.replace(/Fiera Milano/g, '<span class="highlight">Fiera Milano</span>');
+                        displayHtml = displayHtml.replace(/emozionante/g, '<span class="mystery">emozionante</span>');
+                        
+                        paragraph.innerHTML = displayHtml;
+                        charIndex++;
+                    } else {
+                        clearInterval(interval);
+                        
+                        // Add red crosses after second paragraph is complete (index 1)
+                        if (index === 1) {
+                            setTimeout(() => {
+                                addRedCrosses();
+                                // Wait a bit before starting next paragraph
+                                setTimeout(() => {
+                                    typewriterStory(paragraphs, index + 1);
+                                }, 1200);
+                            }, 500);
+                        } else if (index === paragraphs.length - 1) {
+                            // Last paragraph finished - show the button
+                            setTimeout(() => {
+                                const button = document.getElementById('playButton');
+                                button.classList.add('visible');
+                            }, 1000);
+                        } else {
+                            // Start next paragraph after a short delay
+                            setTimeout(() => {
+                                typewriterStory(paragraphs, index + 1);
+                            }, 800);
+                        }
+                    }
+                }, 50); // 50ms per character for slower, more comfortable reading
+            }
+        }
+        
+        function addRedCrosses() {
+            const furnitureItems = document.querySelectorAll('.furniture-item');
+            furnitureItems.forEach((item, index) => {
+                setTimeout(() => {
+                    const cross = document.createElement('div');
+                    cross.className = 'red-cross';
+                    cross.textContent = '❌';
+                    item.appendChild(cross);
+                }, index * 200);
+            });
         }
 
         playButton.addEventListener('click', function() {
             if (!hasRevealed) {
-                // Start music
-                audio.play();
-                
-                // Hide button temporarily
+                // First click: hide button and show ticket details
                 playButton.style.opacity = '0';
                 playButton.style.pointerEvents = 'none';
                 
@@ -536,25 +677,31 @@
                 setTimeout(() => {
                     ticketInfo.classList.add('revealed');
                     
-                    // Start typewriter effect in reverse order: location, date, time, then artist with special effect
+                    // Start typewriter effect in reverse order: location, date, time
                     setTimeout(() => typewriterEffect('location', '📍 Luogo: Fiera Milano - RHO'), 500);
                     setTimeout(() => typewriterEffect('date', '📅 Data: Mercoledì 17 Giugno 2026'), 4000);
                     setTimeout(() => typewriterEffect('time', '🕘 Ora: 21:00'), 8000);
-                    setTimeout(() => revealArtistName(), 11000);
                     
-                    // Artist name: 13 letters (no space) * 1.5s = 19.5s + fireworks (4s)
+                    // After time is revealed, show artist name with music
                     setTimeout(() => {
-                        playButton.textContent = '⏸️ Pausa';
-                        playButton.style.opacity = '1';
-                        playButton.style.pointerEvents = 'auto';
-                        playButton.classList.add('playing');
-                    }, 35000);
+                        // Start music automatically when artist reveal begins
+                        audio.play();
+                        revealArtistName();
+                        
+                        // Show pause button after everything
+                        setTimeout(() => {
+                            playButton.textContent = '⏸️ Pausa';
+                            playButton.style.opacity = '1';
+                            playButton.style.pointerEvents = 'auto';
+                            playButton.classList.add('playing');
+                        }, 35000);
+                    }, 11000);
                     
                 }, 1000);
                 
                 hasRevealed = true;
             } else {
-                // Toggle play/pause
+                // Toggle play/pause for music
                 if (audio.paused) {
                     audio.play();
                     playButton.textContent = '⏸️ Pausa';
