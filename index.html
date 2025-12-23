@@ -669,7 +669,7 @@
 
         playButton.addEventListener('click', function() {
             if (!hasRevealed) {
-                // First click: hide button and show ticket details
+                // FIRST CLICK: Show ticket details (location, date, time)
                 playButton.style.opacity = '0';
                 playButton.style.pointerEvents = 'none';
                 
@@ -682,25 +682,65 @@
                     setTimeout(() => typewriterEffect('date', '📅 Data: Mercoledì 17 Giugno 2026'), 4000);
                     setTimeout(() => typewriterEffect('time', '🕘 Ora: 21:00'), 8000);
                     
-                    // After time is revealed, show artist name with music
+                    // After all details are complete, show second button
                     setTimeout(() => {
-                        // Start music automatically when artist reveal begins
-                        audio.play();
-                        revealArtistName();
-                        
-                        // Show pause button after everything
-                        setTimeout(() => {
-                            playButton.textContent = '⏸️ Pausa';
-                            playButton.style.opacity = '1';
-                            playButton.style.pointerEvents = 'auto';
-                            playButton.classList.add('playing');
-                        }, 35000);
-                    }, 11000);
+                        playButton.textContent = '🤔 Sei ancora più curiosa? Clicca qui! 🤔';
+                        playButton.style.opacity = '1';
+                        playButton.style.pointerEvents = 'auto';
+                        hasRevealed = 'step2';
+                    }, 11500); // Wait for all three items to finish typing
                     
                 }, 1000);
                 
-                hasRevealed = true;
-            } else {
+            } else if (hasRevealed === 'step2') {
+                // SECOND CLICK: Start music and show empty segments
+                playButton.style.opacity = '0';
+                playButton.style.pointerEvents = 'none';
+                
+                // Start music with error handling - MOVED HERE
+                const playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        console.log('Music started successfully');
+                    }).catch((error) => {
+                        console.error('Audio playback failed:', error);
+                        // Try again on user interaction
+                        setTimeout(() => {
+                            audio.play().catch(e => console.error('Retry failed:', e));
+                        }, 100);
+                    });
+                }
+                
+                // Show artist segments (empty)
+                setTimeout(() => {
+                    showArtistSegments();
+                    
+                    // Show third button after segments are visible
+                    setTimeout(() => {
+                        playButton.textContent = '🎯 Provi a dare la soluzione? Clicca qui! 🎯';
+                        playButton.style.opacity = '1';
+                        playButton.style.pointerEvents = 'auto';
+                        hasRevealed = 'step3';
+                    }, 2000);
+                }, 1000);
+                
+            } else if (hasRevealed === 'step3') {
+                // THIRD CLICK: Reveal letters one by one
+                playButton.style.opacity = '0';
+                playButton.style.pointerEvents = 'none';
+                
+                revealArtistLetters();
+                
+                // Show pause button after everything
+                setTimeout(() => {
+                    playButton.textContent = '⏸️ Pausa';
+                    playButton.style.opacity = '1';
+                    playButton.style.pointerEvents = 'auto';
+                    playButton.classList.add('playing');
+                    hasRevealed = 'complete';
+                }, 22000); // Time for all letters to reveal + fireworks
+                
+            } else if (hasRevealed === 'complete') {
                 // Toggle play/pause for music
                 if (audio.paused) {
                     audio.play();
@@ -729,6 +769,136 @@
                     element.style.whiteSpace = 'normal';
                 }
             }, 100);
+        }
+
+        function showArtistSegments() {
+            const artistElement = document.getElementById('artist');
+            const firstName = 'LEWIS';
+            const lastName = 'CAPALDI';
+            const emoji = '🎤 ';
+            
+            // Clear and add emoji
+            artistElement.innerHTML = '<div style="font-size: 0.5em; margin-right: 20px; margin-bottom: 20px; width: 100%; text-align: center;">' + emoji + '</div>';
+            
+            // Create first line (LEWIS)
+            const firstLine = document.createElement('div');
+            firstLine.className = 'artist-line';
+            firstLine.id = 'firstName';
+            
+            // Create second line (CAPALDI)
+            const secondLine = document.createElement('div');
+            secondLine.className = 'artist-line';
+            secondLine.id = 'lastName';
+            
+            // Create slots for first name
+            firstName.split('').forEach((char, index) => {
+                const slot = document.createElement('div');
+                slot.className = 'letter-slot';
+                
+                const container = document.createElement('div');
+                container.className = 'letter-container';
+                
+                const segment = document.createElement('div');
+                segment.className = 'letter-segment';
+                container.appendChild(segment);
+                
+                const letterSpan = document.createElement('span');
+                letterSpan.className = 'artist-letter';
+                letterSpan.textContent = char;
+                letterSpan.dataset.index = index;
+                container.appendChild(letterSpan);
+                
+                slot.appendChild(container);
+                firstLine.appendChild(slot);
+            });
+            
+            // Create slots for last name
+            lastName.split('').forEach((char, index) => {
+                const slot = document.createElement('div');
+                slot.className = 'letter-slot';
+                
+                const container = document.createElement('div');
+                container.className = 'letter-container';
+                
+                const segment = document.createElement('div');
+                segment.className = 'letter-segment';
+                container.appendChild(segment);
+                
+                const letterSpan = document.createElement('span');
+                letterSpan.className = 'artist-letter';
+                letterSpan.textContent = char;
+                letterSpan.dataset.index = index;
+                container.appendChild(letterSpan);
+                
+                slot.appendChild(container);
+                secondLine.appendChild(slot);
+            });
+            
+            artistElement.appendChild(firstLine);
+            artistElement.appendChild(secondLine);
+        }
+
+        function revealArtistLetters() {
+            const firstLine = document.getElementById('firstName');
+            const secondLine = document.getElementById('lastName');
+            
+            const firstNameElements = [];
+            const lastNameElements = [];
+            
+            // Collect first name letters
+            firstLine.querySelectorAll('.artist-letter').forEach((letterSpan, index) => {
+                const segment = letterSpan.parentElement.querySelector('.letter-segment');
+                firstNameElements.push({ element: letterSpan, index: index, segment: segment });
+            });
+            
+            // Collect last name letters
+            secondLine.querySelectorAll('.artist-letter').forEach((letterSpan, index) => {
+                const segment = letterSpan.parentElement.querySelector('.letter-segment');
+                lastNameElements.push({ element: letterSpan, index: index, segment: segment });
+            });
+            
+            // Create random order for each name
+            const firstNameIndices = firstNameElements
+                .map((item, i) => i)
+                .sort(() => Math.random() - 0.5);
+            const lastNameIndices = lastNameElements
+                .map((item, i) => i)
+                .sort(() => Math.random() - 0.5);
+            
+            // Alternate between first and last name
+            const maxLength = Math.max(firstNameIndices.length, lastNameIndices.length);
+            let totalRevealed = 0;
+            const totalLetters = firstNameIndices.length + lastNameIndices.length;
+            
+            for (let i = 0; i < maxLength; i++) {
+                // Reveal from first name
+                if (i < firstNameIndices.length) {
+                    setTimeout(() => {
+                        const letterData = firstNameElements[firstNameIndices[i]];
+                        letterData.element.classList.add('revealed');
+                        letterData.segment.style.animation = 'pulse 0.5s ease-out';
+                        
+                        totalRevealed++;
+                        if (totalRevealed === totalLetters) {
+                            setTimeout(() => launchFireworks(), 1000);
+                        }
+                    }, i * 3000);
+                }
+                
+                // Reveal from last name (offset by 1.5s)
+                if (i < lastNameIndices.length) {
+                    setTimeout(() => {
+                        const letterData = lastNameElements[lastNameIndices[i]];
+                        letterData.element.classList.add('revealed');
+                        letterData.segment.style.animation = 'pulse 0.5s ease-out';
+                        
+                        totalRevealed++;
+                        if (totalRevealed === totalLetters) {
+                            setTimeout(() => launchFireworks(), 1000);
+                        }
+                    }, i * 3000 + 1500);
+                }
+            }
         }
 
         function revealArtistName() {
