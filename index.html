@@ -763,12 +763,17 @@
         }
 
         playButton.addEventListener('click', function() {
+            console.log('Button clicked! Current state:', hasRevealed);
+            
             if (!hasRevealed) {
+                console.log('First click - showing ticket details');
                 // FIRST CLICK: Show ticket details (location, date, time)
                 // Add hidden class immediately for instant disappearance
                 playButton.classList.add('hidden');
                 playButton.style.opacity = '0';
                 playButton.style.pointerEvents = 'none';
+                
+                hasRevealed = 'step1'; // Mark as processing first step
                 
                 // Show ticket info after a short delay
                 setTimeout(() => {
@@ -781,6 +786,7 @@
                     
                     // After all details are complete, show second button
                     setTimeout(() => {
+                        console.log('Details complete - showing second button');
                         playButton.classList.remove('hidden');
                         playButton.textContent = '🤔 Sei ancora più curiosa? Clicca qui! 🤔';
                         playButton.style.opacity = '1';
@@ -834,27 +840,12 @@
                 
                 revealArtistLetters();
                 
-                // Show pause button after everything (letters + fireworks complete)
-                setTimeout(() => {
-                    playButton.classList.remove('hidden');
-                    playButton.textContent = '⏸️ Pausa';
-                    playButton.style.opacity = '1';
-                    playButton.style.pointerEvents = 'auto';
-                    playButton.classList.add('playing');
-                    hasRevealed = 'complete';
-                }, 22000); // Time for all letters to reveal + fireworks
+                // Don't show pause button - just mark as complete
+                hasRevealed = 'complete';
                 
             } else if (hasRevealed === 'complete') {
-                // Toggle play/pause for music
-                if (audio.paused) {
-                    audio.play();
-                    playButton.textContent = '⏸️ Pausa';
-                    playButton.classList.add('playing');
-                } else {
-                    audio.pause();
-                    playButton.textContent = '▶️ Riprendi la musica';
-                    playButton.classList.remove('playing');
-                }
+                // Do nothing - experience is complete
+                return;
             }
         });
 
